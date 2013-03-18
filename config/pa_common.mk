@@ -117,11 +117,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
   ro.pa.version=$(VERSION) \
   ro.papref.revision=$(PA_PREF_REVISION)
 
-# goo.im properties
-ifneq ($(DEVELOPER_VERSION),true)
+# goo.im properties and OTA2
     PRODUCT_PROPERTY_OVERRIDES += \
+      ro.ota2.url=87&ID=85535355 \
       ro.goo.developerid=flappjaxxx \
       ro.goo.rom=pa-kang \
       ro.goo.board=mako \
       ro.goo.version=$(shell date +%s)
-endif
