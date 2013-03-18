@@ -1,0 +1,764 @@
+#!/system/bin/sh
+#
+# FJTool - by AlienMind & flappjaxxx
+# It provides an execution interface for controlled commands,
+# plus a configuration interface that allows modifying FJTool.apk
+# interface (adding and removing tabs and options)
+#
+# TODO:
+#
+# * UV scripts should look for configs on an sdcard folder
+# * There are still some commands harcoded into the app
+#   (labeled with *). It's needed to make them optional too
+#   and exported via FJTool setup
+#
+FJTool_VERSION="1.00" # Script version
+HELP="Usage: $0 <cmd> ..."
+### Only root allowed
+WHO=`whoami 2>&1`
+if [ "$WHO" != "root" -a "$WHO" != "whoami: unknown uid 0" ]; then
+  echo "Must be root"
+  exit 1
+fi
+
+if [ "$1" = "" ]; then
+  echo "$HELP"
+  exit 2
+fi
+
+die () {
+  echo $@
+  exit 1
+}
+
+
+ListCommands() {
+  printf "FJTool_VERSION:$FJTool_VERSION\n"
+  printf "$SUPPORTED_COMMANDS\n"
+  printf "$CATEGORIES\n"
+  printf "$CATEGORY_COMMANDS"
+  ( printf "$COMMAND_OPTIONS" ; printf "$COMMAND_DESCRIPTIONS" ) | sort
+}
+
+Upgrade() {
+  local MODE=$1
+  case $MODE in
+    "version")      PrintVersion ;;
+    "checkversion") CheckVersion ;;
+    "FJTool")      UpgradeFJTool ;;
+  esac
+}
+
+PrintVersion() {
+  printf "$FJTool_VERSION"
+}
+
+gpsatt() {
+FILE=gpsatt.tgz
+MD5SUM=918345eeadec96ff65a36fda1a06945e
+URL="http://rootdev.org/gps/gpsatt.tgz"
+if [ ! -d /sdcard/download/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/download/tmp
+fi
+cd /sdcard/download/tmp
+if [ -f "$FILE" ]; then
+MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then 
+echo "Downloading Package Be Patient"
+rm  "$FILE"
+wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  mount -o remount,rw /system
+  echo "Removing Old Config Files"
+  rm  /system/etc/SuplRootCert
+  rm  /system/etc/gps.conf
+  cd /sdcard/download/tmp
+echo "Extracting Package"
+  tar -xzf gpsatt.tgz
+echo "Copy Config Files"
+  cp gps.conf /system/etc/gps.conf
+  cp SuplRootCert /system/etc/SuplRootCert
+echo "Cleaning up"
+    mount -o remount,ro /system
+  cd - >/dev/null 2>&1
+  echo "Done! Please Reboot to Activate ATT GPS Config"
+else
+  echo "Failed to Install ATT GPS Config"
+  echo "Try Again"
+  exit 1
+fi
+rm  /sdcard/download/tmp/gps.conf
+rm  /sdcard/download/tmp/SuplRootCert
+rm  /sdcard/download/tmp/$FILE
+rm -R /sdcard/download/rectmp
+
+if [ "$MK" = "1" ]; then
+  rm -R /sdcard/download/tmp 
+fi
+}
+
+gpsgeneric() {
+FILE=gpsgeneric.tgz
+MD5SUM=f70cf4c3a81cd8f5d1864fe08bfb36b2
+URL="http://rootdev.org/gps/gpsgeneric.tgz"
+if [ ! -d /sdcard/download/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/download/tmp
+fi
+cd /sdcard/download/tmp
+if [ -f "$FILE" ]; then
+MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then 
+echo "Downloading Package Be Patient"
+rm  "$FILE"
+wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  mount -o remount,rw /system
+  echo "Removing Old Config Files"
+  rm  /system/etc/SuplRootCert
+  rm  /system/etc/gps.conf
+  cd /sdcard/download/tmp
+echo "Extracting Package"
+  tar -xzf gpsgeneric.tgz
+echo "Copy Config Files"
+  cp gps.conf /system/etc/gps.conf
+  cp SuplRootCert /system/etc/SuplRootCert
+echo "Cleaning up"
+    mount -o remount,ro /system
+  cd - >/dev/null 2>&1
+  echo "Done! Please Reboot to Activate Generic GPS Config"
+else
+  echo "Failed to Install Generic GPS Config"
+  echo "Try Again"
+  exit 1
+fi
+rm  /sdcard/download/tmp/gps.conf
+rm  /sdcard/download/tmp/SuplRootCert
+rm  /sdcard/download/tmp/$FILE
+rm -R /sdcard/download/rectmp
+
+if [ "$MK" = "1" ]; then
+  rm -R /sdcard/download/tmp 
+fi
+}
+
+gpsstock() {
+FILE=gpstock.tgz
+MD5SUM=f0530b2f3a710ec1a1cf7ce84071198d
+URL="http://rootdev.org/gps/gpstock.tgz"
+if [ ! -d /sdcard/download/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/download/tmp
+fi
+cd /sdcard/download/tmp
+if [ -f "$FILE" ]; then
+MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then 
+echo "Downloading Package Be Patient"
+rm  "$FILE"
+wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  mount -o remount,rw /system
+  echo "Removing Old Config Files"
+  rm  /system/etc/SuplRootCert
+  rm  /system/etc/gps.conf
+  cd /sdcard/download/tmp
+echo "Extracting Package"
+  tar -xzf gpstock.tgz
+echo "Copy Config Files"
+  cp gps.conf /system/etc/gps.conf
+echo "Cleaning up"
+    mount -o remount,ro /system
+  cd - >/dev/null 2>&1
+  echo "Done! Please Reboot to Activate Stock GPS Config"
+else
+  echo "Failed to Install Stock GPS Config"
+  echo "Try Again"
+  exit 1
+fi
+rm  /sdcard/download/tmp/gps.conf
+rm  /sdcard/download/tmp/SuplRootCert
+rm  /sdcard/download/tmp/$FILE
+rm -R /sdcard/download/rectmp
+
+if [ "$MK" = "1" ]; then
+  rm -R /sdcard/download/tmp 
+fi
+}
+
+gpstmobile() {
+FILE=gpstmobile.tgz
+MD5SUM=0c9aba497612c86fc2eea0c2c07add60
+URL="http://rootdev.org/gps/gpstmobile.tgz"
+if [ ! -d /sdcard/download/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/download/tmp
+fi
+cd /sdcard/download/tmp
+if [ -f "$FILE" ]; then
+MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then 
+echo "Downloading Package Be Patient"
+rm  "$FILE"
+wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  mount -o remount,rw /system
+  echo "Removing Old Config Files"
+  rm  /system/etc/SuplRootCert
+  rm  /system/etc/gps.conf
+  cd /sdcard/download/tmp
+echo "Extracting Package"
+  tar -xzf gpstmobile.tgz
+echo "Copy Config Files"
+  cp gps.conf /system/etc/gps.conf
+  cp SuplRootCert /system/etc/SuplRootCert
+  echo "Cleaning up"
+    mount -o remount,ro /system
+  cd - >/dev/null 2>&1
+  echo "Done! Please Reboot to Activate T-Mobile GPS Config"
+else
+  echo "Failed to Install T-Mobile GPS Config"
+  echo "Try Again"
+  exit 1
+fi
+rm  /sdcard/download/tmp/gps.conf
+rm  /sdcard/download/tmp/SuplRootCert
+rm  /sdcard/download/tmp/$FILE
+rm -R /sdcard/download/rectmp
+
+if [ "$MK" = "1" ]; then
+  rm -R /sdcard/download/tmp 
+fi
+}
+
+gpsww() {
+FILE=gpsww.tgz
+MD5SUM=cc20c20f1e8261e40ceb2e92fb1af654
+URL="http://rootdev.org/gps/gpsww.tgz"
+if [ ! -d /sdcard/download/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/download/tmp
+fi
+cd /sdcard/download/tmp
+if [ -f "$FILE" ]; then
+MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then 
+echo "Downloading Package Be Patient"
+rm  "$FILE"
+wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  mount -o remount,rw /system
+  echo "Removing Old Config Files"
+  rm  /system/etc/SuplRootCert
+  rm  /system/etc/gps.conf
+  cd /sdcard/download/tmp
+echo "Extracting Package"
+  tar -xzf gpsww.tgz
+echo "Copy Config Files"
+  cp gps.conf /system/etc/gps.conf
+echo "Cleaning up"
+    mount -o remount,ro /system
+  cd - >/dev/null 2>&1
+  echo "Done! Please Reboot to Activate Worldwide 1.3 GPS Config"
+else
+  echo "Failed to Install Worldwide 1.3 GPS Config"
+  echo "Try Again"
+  exit 1
+fi
+rm  /sdcard/download/tmp/gps.conf
+rm  /sdcard/download/tmp/SuplRootCert
+rm  /sdcard/download/tmp/$FILE
+rm -R /sdcard/download/rectmp
+
+if [ "$MK" = "1" ]; then
+  rm -R /sdcard/download/tmp 
+fi
+}
+
+gpswwa() {
+FILE=gpswwa.tgz
+MD5SUM=32a92de7a58a8e9a188e640c07c59747
+URL="http://rootdev.org/gps/gpswwa.tgz"
+if [ ! -d /sdcard/download/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/download/tmp
+fi
+cd /sdcard/download/tmp
+if [ -f "$FILE" ]; then
+MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then 
+echo "Downloading Package Be Patient"
+rm  "$FILE"
+wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  mount -o remount,rw /system
+  echo "Removing Old Config Files"
+  rm  /system/etc/SuplRootCert
+  rm  /system/etc/gps.conf
+  cd /sdcard/download/tmp
+echo "Extracting Package"
+  tar -xzf gpswwa.tgz
+echo "Copy Config Files"
+  cp gps.conf /system/etc/gps.conf
+echo "Cleaning up"
+    mount -o remount,ro /system
+  cd - >/dev/null 2>&1
+  echo "Done! Please Reboot to Activate Worldwide Alternate GPS Config"
+else
+  echo "Failed to Install Worldwide Alternate GPS Config"
+  echo "Try Again"
+  exit 1
+fi
+rm  /sdcard/download/tmp/gps.conf
+rm  /sdcard/download/tmp/SuplRootCert
+rm  /sdcard/download/tmp/$FILE
+rm -R /sdcard/download/rectmp
+
+if [ "$MK" = "1" ]; then
+  rm -R /sdcard/download/tmp 
+fi
+}
+
+noadblock() {
+mount -o remount,rw /system
+rm /system/etc/hosts
+echo '127.0.0.1		    localhost' > /system/etc/hosts
+chmod 644 /system/etc/hosts
+mount -o remount,ro /system
+echo Restored stock hosts file
+echo Ad Blocking Disabled
+echo Reboot required!
+}
+
+rmsupl() {
+mount -o remount,rw /system
+rm  /system/etc/SuplRootCert
+mount -o remount,ro /system
+echo Removed SuplRootCert!
+}
+
+yesadblock() {
+mkdir /sdcard/tmp
+cd /sdcard/tmp
+echo Downloading latest hosts file
+wget http://rootdev.org/i717/TU2/updates/hosts.txt
+echo Installing updated hosts file
+mount -o remount,rw /system
+cp -f hosts.txt /system/etc/hosts
+chmod 644 /system/etc/hosts
+rm /sdcard/tmp/hosts.txt
+mount -o remount,ro /system
+echo Installed Custom hosts file
+echo Ad Blocking Enabled
+echo Reboot required to apply changes!
+}
+
+novalauncher() {
+FILE=NovaLauncher_2.0.1.apk
+MD5SUM=0a0a700976412f437ad648f99165eab5
+URL="http://rootdev.org/maguro/files/NovaLauncher_2.0.1.apk"
+if [ ! -d /sdcard/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/tmp
+fi
+cd /sdcard/tmp
+if [ -f "$FILE" ]; then
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then
+echo "Downloading Package Be Patient"
+  rm  "$FILE"
+  wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  cd /sdcard/tmp
+echo "Installing Nova Launcher"
+  pm install -r NovaLauncher_2.0.1.apk
+  cd - >/dev/null 2>&1
+  echo "Done! Enjoy NovaLauncher!"
+else
+  echo "Failed to download / install NovaLauncher"
+  exit 1
+fi
+rm  /sdcard/tmp/$FILE
+
+if [ "$MK" = "1" ]; then
+  rmdir /sdcard/tmp 
+fi
+}
+
+apexlauncher() {
+FILE=ApexLauncher_v1.4.4.apk
+MD5SUM=221a97d209fb431f23d3b4d4fdf06a0c
+URL="http://rootdev.org/maguro/files/ApexLauncher_v1.4.4.apk"
+if [ ! -d /sdcard/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/tmp
+fi
+cd /sdcard/tmp
+if [ -f "$FILE" ]; then
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then
+echo "Downloading Package Be Patient"
+  rm  "$FILE"
+  wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  cd /sdcard/tmp
+echo "Installing Apex Launcher"
+  pm install -r ApexLauncher_v1.4.4.apk
+  cd - >/dev/null 2>&1
+  echo "Done! Enjoy Apex Launcher!"
+else
+  echo "Failed to download / install ApexLauncher"
+  exit 1
+fi
+rm  /sdcard/tmp/$FILE
+
+if [ "$MK" = "1" ]; then
+  rmdir /sdcard/tmp 
+fi
+}
+
+adwlauncher() {
+FILE=ADWLauncher.apk
+MD5SUM=6a510392afef487c1556ea418b0e6083
+URL="http://rootdev.org/maguro/files/ADWLauncher.apk"
+if [ ! -d /sdcard/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/tmp
+fi
+cd /sdcard/tmp
+if [ -f "$FILE" ]; then
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then
+echo "Downloading Package Be Patient"
+  rm  "$FILE"
+  wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  cd /sdcard/tmp
+echo "Installing ADW Launcher"
+  pm install -r ADWLauncher.apk
+  cd - >/dev/null 2>&1
+  echo "Done! Enjoy ADW Launcher!"
+else
+  echo "Failed to download / install ADWLauncher"
+  exit 1
+fi
+rm  /sdcard/tmp/$FILE
+
+if [ "$MK" = "1" ]; then
+  rmdir /sdcard/tmp 
+fi
+}
+
+netflixblk() {
+FILE=Netflix-Black-Rotation-v2.1.2.apk
+MD5SUM=71daa077010fdb3fcfd7770e446d868d
+URL="http://jdvhosting.com/flappjaxxxftp/Netflix-Black-Rotation-v2.1.2.apk"
+if [ ! -d /sdcard/tmp ]; then
+  MK=1
+  mkdir -p /sdcard/tmp
+fi
+cd /sdcard/tmp
+if [ -f "$FILE" ]; then
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then
+echo "Downloading Package Be Patient"
+  rm  "$FILE"
+  wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+echo "Installing Netflix Black with Rotation Mods"
+cd /sdcard/tmp
+pm install -r Netflix-Black-Rotation-v2.1.2.apk
+else
+  echo "Failed to download / install Netflix-Black-Rotation-v2.1.2"
+  exit 1
+fi
+rm  /sdcard/tmp/$FILE
+
+if [ "$MK" = "1" ]; then
+  rmdir /sdcard/tmp 
+fi
+}
+
+wipfeat() {
+echo "--Work In Progress--"
+}
+
+disabled() {
+echo "--Feature disabled for now--"
+}
+
+
+cwmrec6() {
+FILE=recovery-clockwork-6.0.2.3-mako.img
+MD5SUM=bd7285a2e209c54ca8e3a5657b2a573b
+URL="http://rootdev.org/maguro/files/recovery-clockwork-6.0.2.3-mako.img"
+if [ ! -d /sdcard/download/rectmp ]; then
+  MK=1
+  mkdir -p /sdcard/download/rectmp
+fi
+cd /sdcard/download/rectmp
+if [ -f "$FILE" ]; then
+MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then 
+echo "Downloading Package Be Patient"
+rm  "$FILE"
+wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  cd /sdcard/download/rectmp
+echo "Flashing Recovery"
+  cp recovery-clockwork-6.0.2.3-mako.img /sdcard/recovery.img
+dd if=/sdcard/recovery.img of=/dev/block/mmcblk0p7
+echo "Cleaning up"
+  cd - >/dev/null 2>&1
+  echo "Done! Please Reboot and Enjoy CWM Recovery"
+else
+  echo "Failed to Install CWM Recovery"
+  echo "Try Again"
+  exit 1
+fi
+rm  /sdcard/recovery.img
+rm  /sdcard/download/rectmp/$FILE
+rm -R /sdcard/download/rectmp
+
+if [ "$MK" = "1" ]; then
+  rm -R /sdcard/download/rectmp 
+fi
+}
+
+cwmtouch() {
+FILE=recovery-clockwork-touch-6.0.2.3-mako.img
+MD5SUM=0892f64da3a36995819be8c3c0fe1931
+URL="http://rootdev.org/maguro/files/recovery-clockwork-touch-6.0.2.3-mako.img"
+if [ ! -d /sdcard/download/rectmp ]; then
+  MK=1
+  mkdir -p /sdcard/download/rectmp
+fi
+cd /sdcard/download/rectmp
+if [ -f "$FILE" ]; then
+MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then 
+echo "Downloading Package Be Patient"
+rm  "$FILE"
+wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  cd /sdcard/download/rectmp
+echo "Flashing Recovery"
+  cp recovery-clockwork-touch-6.0.2.3-mako.img /sdcard/recovery.img
+dd if=/sdcard/recovery.img of=/dev/block/mmcblk0p7
+echo "Cleaning up"
+  cd - >/dev/null 2>&1
+  echo "Done! Please Reboot and Enjoy CWM Touch Recovery"
+else
+  echo "Failed to Install CWM Touch Recovery"
+  echo "Try Again"
+  exit 1
+fi
+rm  /sdcard/recovery.img
+rm  /sdcard/download/rectmp/$FILE
+rm -R /sdcard/download/rectmp
+
+if [ "$MK" = "1" ]; then
+  rm -R /sdcard/download/rectmp 
+fi
+}
+
+twrp() {
+FILE=openrecovery-twrp-2.4.4.0-mako.img
+MD5SUM=d8b276860f1ead575ad2475df1ca0405
+URL="http://rootdev.org/maguro/files/openrecovery-twrp-2.4.4.0-mako.img"
+if [ ! -d /sdcard/download/rectmp ]; then
+  MK=1
+  mkdir -p /sdcard/download/rectmp
+fi
+cd /sdcard/download/rectmp
+if [ -f "$FILE" ]; then
+MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" != "1" ]; then 
+echo "Downloading Package Be Patient"
+rm  "$FILE"
+wget "$URL"
+  MD5=`md5sum $FILE | awk '{ print $1 }'`
+  if [ "$MD5" = "$MD5SUM" ]; then
+     GOOD=1
+  fi
+fi
+if [ "$GOOD" = "1" ]; then
+  cd /sdcard/download/rectmp
+echo "Flashing Recovery"
+  cp openrecovery-twrp-2.4.4.0-mako.img /sdcard/recovery.img
+dd if=/sdcard/recovery.img of=/dev/block/mmcblk0p7
+echo "Cleaning up"
+  cd - >/dev/null 2>&1
+  echo "Done! Please Reboot and Enjoy TWRP Recovery"
+else
+  echo "Failed to Install TWRP Recovery"
+  echo "Try Again"
+  exit 1
+fi
+rm  /sdcard/recovery.img
+rm  /sdcard/download/rectmp/$FILE
+rm -R /sdcard/download/rectmp
+
+if [ "$MK" = "1" ]; then
+  rm -R /sdcard/download/rectmp 
+fi
+}
+
+#### Main execution
+main() {
+  CMD=$1
+  shift
+
+  #### Recovery mode
+  if [ "$RECOVERY_MODE" = "1" ]; then
+    ALLOWED_CMD=`echo $RECOVERY_CMD_WHITELIST | grep $CMD`
+    if [ "$ALLOWED_CMD" = "" ]; then
+      echo "Command $CMD not allowed in recovery mode"
+      exit 1
+    fi
+  fi
+
+  #### All of supported commands
+  case $CMD in
+
+    "gpsatt") gpsatt ;;   # *
+    "gpsgeneric") gpsgeneric ;;   # *
+    "gpsstock") gpsstock ;;   # *
+    "gpstmobile") gpstmobile ;;   # *
+    "gpsww") gpsww ;;   # *
+    "gpswwa") gpswwa ;;   # *
+    "noadblock") noadblock ;;   # *
+    "rmsupl") rmsupl ;;   # *
+    "yesadblock") yesadblock ;;   # *
+    "apexlauncher") apexlauncher ;;   # *
+    "novalauncher") novalauncher ;;   # *
+    "treblauncher") treblauncher ;;   # *
+    "netflixblk") netflixblk ;;   # *
+    "wipfeat") wipfeat ;;   # *
+    "cwmrec6") cwmrec6 ;;   # *
+    "cwmtouch") cwmtouch ;;   # *
+    "twrp") twrp ;;   # *
+
+  
+    ### Any other command - we are a wrapper
+    *)            exec $CMD $@ ;;
+    esac
+
+}
+
+## Normal execution - just main
+main $@
+exit $?

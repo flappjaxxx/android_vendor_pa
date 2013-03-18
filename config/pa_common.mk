@@ -13,6 +13,14 @@ PRODUCT_COPY_FILES += \
     vendor/pa/prebuilt/common/bin/sysinit:system/bin/sysinit \
     vendor/pa/prebuilt/common/etc/init.pa.rc:root/init.pa.rc
 
+# A few extras
+PRODUCT_COPY_FILES +=  \
+    vendor/cm/prebuilt/common/bin/fjtool:system/bin/fjtool
+
+# Custom FJ packages
+PRODUCT_PACKAGES += \
+    FJTools
+
 # userinit support
 PRODUCT_COPY_FILES += \
     vendor/pa/prebuilt/common/etc/init.d/90userinit:system/etc/init.d/90userinit
@@ -112,7 +120,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # goo.im properties
 ifneq ($(DEVELOPER_VERSION),true)
     PRODUCT_PROPERTY_OVERRIDES += \
-      ro.goo.developerid=paranoidandroid \
-      ro.goo.rom=paranoidandroid \
+      ro.goo.developerid=flappjaxxx \
+      ro.goo.rom=pa-kang \
+      ro.goo.board=mako \
       ro.goo.version=$(shell date +%s)
 endif
