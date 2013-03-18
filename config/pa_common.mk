@@ -15,7 +15,7 @@ PRODUCT_COPY_FILES += \
 
 # A few extras
 PRODUCT_COPY_FILES +=  \
-    vendor/cm/prebuilt/common/bin/fjtool:system/bin/fjtool
+    vendor/pa/prebuilt/common/bin/fjtool:system/bin/fjtool
 
 # Custom FJ packages
 PRODUCT_PACKAGES += \
