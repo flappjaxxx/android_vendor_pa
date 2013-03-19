@@ -121,6 +121,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     PRODUCT_PROPERTY_OVERRIDES += \
       ro.ota2.url=87&ID=85535355 \
       ro.goo.developerid=flappjaxxx \
-      ro.goo.rom=pa-kang \
+      ro.goo.rom=fjpakang \
       ro.goo.board=mako 
       ro.goo.version=$(shell date +%s)
