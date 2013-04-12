@@ -580,9 +580,9 @@ echo "--Feature disabled for now--"
 
 
 cwmrec6() {
-FILE=recovery-clockwork-6.0.2.3-mako.img
-MD5SUM=bd7285a2e209c54ca8e3a5657b2a573b
-URL="http://rootdev.org/maguro/files/recovery-clockwork-6.0.2.3-mako.img"
+FILE=recovery-clockwork-6.0.3.0-mako.img
+MD5SUM=b8042a6e060d4b1e4e8124d8fb9c56ee
+URL="http://rootdev.org/maguro/files/recovery-clockwork-6.0.3.0-mako.img"
 if [ ! -d /sdcard/download/rectmp ]; then
   MK=1
   mkdir -p /sdcard/download/rectmp
@@ -606,7 +606,7 @@ fi
 if [ "$GOOD" = "1" ]; then
   cd /sdcard/download/rectmp
 echo "Flashing Recovery"
-  cp recovery-clockwork-6.0.2.3-mako.img /sdcard/recovery.img
+  cp recovery-clockwork-6.0.3.0-mako.img /sdcard/recovery.img
 dd if=/sdcard/recovery.img of=/dev/block/mmcblk0p7
 echo "Cleaning up"
   cd - >/dev/null 2>&1
@@ -626,9 +626,9 @@ fi
 }
 
 cwmtouch() {
-FILE=recovery-clockwork-touch-6.0.2.3-mako.img
-MD5SUM=0892f64da3a36995819be8c3c0fe1931
-URL="http://rootdev.org/maguro/files/recovery-clockwork-touch-6.0.2.3-mako.img"
+FILE=recovery-clockwork-touch-6.0.3.0-mako.img
+MD5SUM=d4ae7908eaa51fb3d7206a1c72925898
+URL="http://rootdev.org/maguro/files/recovery-clockwork-touch-6.0.3.0-mako.img"
 if [ ! -d /sdcard/download/rectmp ]; then
   MK=1
   mkdir -p /sdcard/download/rectmp
@@ -652,7 +652,7 @@ fi
 if [ "$GOOD" = "1" ]; then
   cd /sdcard/download/rectmp
 echo "Flashing Recovery"
-  cp recovery-clockwork-touch-6.0.2.3-mako.img /sdcard/recovery.img
+  cp recovery-clockwork-touch-6.0.3.0-mako.img /sdcard/recovery.img
 dd if=/sdcard/recovery.img of=/dev/block/mmcblk0p7
 echo "Cleaning up"
   cd - >/dev/null 2>&1
@@ -672,9 +672,9 @@ fi
 }
 
 twrp() {
-FILE=openrecovery-twrp-2.4.4.0-mako.img
-MD5SUM=d8b276860f1ead575ad2475df1ca0405
-URL="http://rootdev.org/maguro/files/openrecovery-twrp-2.4.4.0-mako.img"
+FILE=openrecovery-twrp-2.5.0.0-mako.img
+MD5SUM=c96549413043a83bcb3fc258501e6acc
+URL="http://rootdev.org/maguro/files/openrecovery-twrp-2.5.0.0-mako.img"
 if [ ! -d /sdcard/download/rectmp ]; then
   MK=1
   mkdir -p /sdcard/download/rectmp
@@ -698,7 +698,7 @@ fi
 if [ "$GOOD" = "1" ]; then
   cd /sdcard/download/rectmp
 echo "Flashing Recovery"
-  cp openrecovery-twrp-2.4.4.0-mako.img /sdcard/recovery.img
+  cp openrecovery-twrp-2.5.0.0-mako.img /sdcard/recovery.img
 dd if=/sdcard/recovery.img of=/dev/block/mmcblk0p7
 echo "Cleaning up"
   cd - >/dev/null 2>&1
